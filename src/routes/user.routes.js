@@ -26,7 +26,7 @@ router.post('/register', async(req, res)=>{
         const token = await user.generateToken()
         res.send({
             status:1,
-            data: user,
+            data:{user, token},
             message:'added'
         })
     }
@@ -40,7 +40,7 @@ router.post('/register', async(req, res)=>{
     }
 }) //working
 
-router.patch('/user/:id', async(req,res)=>{
+router.patch('/user/:id',auth, async(req,res)=>{
     availableUpdates = ['fname', 'lname', 'username','role']
     const reqKeys = Object.keys(req.body)
     flag = reqKeys.every(key=> availableUpdates.includes(key))
@@ -63,7 +63,7 @@ router.patch('/user/:id', async(req,res)=>{
     }
 })  //working
 
-router.delete('/user/:id', async(req,res)=>{
+router.delete('/user/:id', auth, async(req,res)=>{
     const id = req.params.id
     try{
         await userModel.findByIdAndDelete(id)
@@ -105,7 +105,7 @@ router.patch('/editPassword/:id', async(req,res)=>{
     }
 }) 
 
-router.get('/allUsers', auth, async(req,res)=>{
+router.get('/allUsers',auth, async(req,res)=>{
     try{
         const users = await userModel.find()
         res.status(200).send({
@@ -123,6 +123,19 @@ router.get('/allUsers', auth, async(req,res)=>{
     }
 })
 
+router.post("/logoutAll" ,auth, async(req,res)=>{
+    try {
+           token=  req.user.tokens=[]
+      await  req.user.save() 
+        res.send("removed all",token)
+    } catch (error){
+        res.send({
+           data:error.message
+        })
+    
+    }
+})
+
 // show all address
 
 //add address
@@ -135,7 +148,7 @@ router.get('/allUsers', auth, async(req,res)=>{
 
 // get all orders
 
-router.get('/userOrders', auth, async(req,res)=>{    
+router.get('/userOrders', async(req,res)=>{    
     try{
         orders = await userModel.findById(req.user._id, 'orders')
         res.status(200).send({

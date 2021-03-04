@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const roleSchema = new mongoose.Schema({
     name:{
         type:String,
-        minLength:[5,'minmum length'],
+        minLength:[3,'minmum length'],
         maxLength:30
     },
     routes:[

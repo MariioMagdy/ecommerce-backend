@@ -67,8 +67,8 @@ const userSchema = new mongoose.Schema({
         default:false
     },
     role_id:{  
-        type: mongoose.Schema.Types.ObjectId,
-        default: null,
+        type: String,
+        default:"user",
         ref:'Role'        
     },
     tokens:[
